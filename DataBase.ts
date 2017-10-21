@@ -10,12 +10,12 @@ declare global {
   }
 }
 
-let isNode=new Function("try {return this===global;}catch(e){return false;}");
+var isBrowser=new Function("try {return this===window;}catch(e){ return false;}");
 let fs;
-if(isNode()){
-  fs = require(fs);
-} else {
+if(isBrowser()){
   fs = window.require('fs');
+} else {
+  fs = require(fs);
 }
 
 
