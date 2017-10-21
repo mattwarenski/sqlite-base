@@ -5,13 +5,19 @@ import { DataType } from "./decorators";
 import * as moment from 'moment';
 import { ColumnInfo } from "./ColumnInfo";
 
-declare global {
-  interface Window {
-    require: any;
+let isNode=new Function("try {return this===global;}catch(e){return false;}");
+let fs;
+if(isNode()){
+  fs = require(fs);
+} else {
+  declare global {
+    interface Window {
+      require: any;
+    }
   }
+  fs = window.require('fs');
 }
 
-let fs = window.require('fs');
 
 export class DataBase{
   private filepath: string;

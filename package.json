@@ -1,0 +1,25 @@
+{
+  "name": "sqlite-base",
+  "version": "1.0.0",
+  "description": "",
+  "main": "DataBase.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattwarenski/sqlite-base.git"
+  },
+  "keywords": [
+    "sqlite3"
+  ],
+  "author": "Mathew Warenski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mattwarenski/sqlite-base/issues"
+  },
+  "homepage": "https://github.com/mattwarenski/sqlite-base#readme",
+  "dependencies": {
+    "sql.js": "^0.4.0"
+  }
+}
