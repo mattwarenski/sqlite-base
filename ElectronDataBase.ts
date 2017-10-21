@@ -8,6 +8,6 @@ declare global {
 }
 
 let fs = window.require('fs');
-export function createElectronDB(filepath: string, tables: RowEntity[]){
+export function createElectronDB(filepath: string, tables: RowEntity[]): DataBase{
   return new DataBase(fs, filepath, tables);
 }
