@@ -33,13 +33,13 @@ export class DataBase{
   private updateSchema(): void{
     let currentTables = this.getTables();
     this.tables.forEach( (table: RowEntity) => {
-      if(!currentTables.includes(table.getTableName())){
+      if(currentTables.indexOf(table.getTableName()) < 0){
         this.createTable(table);
       }
       let cols = table.getColumns().map( (ci: ColumnInfo) => ci.getName());
       let currentColumns = this.getColumns(table).map( col => col[1]);
       cols.forEach((column: string)=>{
-        if(!currentColumns.includes(column)){
+        if(currentColumns.indexOf(column) < 0){
           this.run(`ALTER TABLE ${table.getTableName()} ADD ${table.getColumns().find( col => col.getName() === column).toSqlArg()}`)
           console.log('added columns', this.getColumns(table))
           //console.warn(`Found column ${column} that is not in table ${table.getTableName()}. Adding new columns has not been implemented yet`)
