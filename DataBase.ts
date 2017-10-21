@@ -4,39 +4,25 @@ import * as SQL from "sql.js"
 import { DataType } from "./decorators";
 import * as moment from 'moment';
 import { ColumnInfo } from "./ColumnInfo";
-declare global {
-  interface Window {
-    require: any;
-  }
-}
-
-var isBrowser=new Function("try {return this===window;}catch(e){ return false;}");
-let fs;
-if(isBrowser()){
-  fs = window.require('fs');
-} else {
-  fs = require(fs);
-}
-
 
 export class DataBase{
   private filepath: string;
   private tables: RowEntity[];
   private db: any;
+  private fs;
   
-  constructor(filepath: string, tables: RowEntity[]){
+  constructor(fs: any, filepath: string, tables: RowEntity[]){
     this.filepath = filepath;
     this.tables = tables;
+    this.fs = fs;
   }
 
   initDB(cb: ()=>void){
-    fs.exists(this.filepath, (exists: boolean) => {
+    this.fs.exists(this.filepath, (exists: boolean) => {
       if(exists){
-        console.log("db exists");
         this.readDB(cb);
       }
       else{
-        console.log("creating db");
         this.db = new SQL.Database();
         this.tables.forEach( t => this.createTable(t));
         cb();
@@ -64,7 +50,7 @@ export class DataBase{
   }
 
   readDB(cb: ()=>void){
-    fs.readFile(this.filepath, (err, data) => {
+    this.fs.readFile(this.filepath, (err, data) => {
       if(err){
         throw Error(`Unable to read DB from ${this.filepath}.\nMessage:${err}}`) 
       }
@@ -77,7 +63,7 @@ export class DataBase{
   writeDB(){
     try{
       let dataBuffer = this.db.export();
-      fs.writeFileSync(this.filepath, dataBuffer);
+      this.fs.writeFileSync(this.filepath, dataBuffer);
       console.log("saved to ", this.filepath);
     }
     catch(e){
