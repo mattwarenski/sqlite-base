@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 export class DBFilter{
   earliestDate: Date;
   latestDate: Date;
@@ -10,7 +12,7 @@ export class DBFilter{
    */
   private formatObject(prop: any){
     if(prop instanceof Date){
-      return `'${prop.toISOString().slice(0, 19).replace('T', ' ')}'`;
+      return moment(prop).format("YYYY-MM-DD")
     } 
     return prop;
   }
