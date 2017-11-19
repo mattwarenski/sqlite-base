@@ -18,8 +18,8 @@ export class DBFilter{
   }
 
   getDateConstraints(): string[]{
-    return [ this.dateField && this.earliestDate ? `${this.dateField} >= ${this.formatObject(this.earliestDate)}` : "",
-      this.dateField && this.latestDate ? `${this.dateField} <= ${this.formatObject(this.latestDate)}` : ""]
+    return [ this.dateField && this.earliestDate ? `${this.dateField} >= '${this.formatObject(this.earliestDate)}'` : "",
+      this.dateField && this.latestDate ? `${this.dateField} <= '${this.formatObject(this.latestDate)}'` : ""]
       .filter( s => s);
   }
 
