@@ -25,6 +25,7 @@ export class DataBase{
       else{
         this.db = new SQL.Database();
         this.tables.forEach( t => this.createTable(t));
+        this.writeDB();
         cb();
       }
     });
@@ -96,7 +97,6 @@ export class DataBase{
         cols.push(c.getName());
       } 
     }); 
-     
     let statement = `REPLACE INTO ${table.getTableName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
     this.run(statement, vals);
   }
@@ -152,12 +152,44 @@ export class DataBase{
     return res;
   }
 
-  getRows(modelObject: RowEntity, filter?: DBFilter){
+  count(modelObject, filter?: DBFilter): number{
+    let where = this.createWhereClause(modelObject, filter);
+    let statementSql = `SELECT count(1) FROM ${modelObject.getTableName()} ${where}`;
+    let statement = this.db.prepare(statementSql);
+    return this.getFirstResult(statement);
+  }
+
+  sum(modelObject, sumColumn, filter?: DBFilter): number{
+    let where = this.createWhereClause(modelObject, filter);
+    let statementSql = `SELECT sum(${sumColumn}) FROM ${modelObject.getTableName()} ${where}`;
+    let statement = this.db.prepare(statementSql);
+    return this.getFirstResult(statement); 
+  }
+
+  private getFirstResult(statement): number{
+    statement.step();
+    let res = statement.get();
+    if(!res || res.length !== 1){
+      throw new Error("Expected 1 result from sum/count. Got " + res.length); 
+    }
+    if(!res[0]){
+      throw new Error("Got null result form sum/count"); 
+    }
+
+    return res[0];
+  }
+
+  private createWhereClause(modelObject: RowEntity, filter?: DBFilter): string{
     let filters = [];
     modelObject.getColumns().forEach( ci => modelObject[ci.getName()] ? filters.push(ci.getName()) : null);
     let clause = filters.map( prop => `${prop} = ${modelObject[prop]}`).concat( filter ? filter.getDateConstraints() : []).join(" AND ");
     let where = clause ? "WHERE " + clause : "";
     where += filter ? " " + filter.getSortByClause() : "";
+    return where; 
+  }
+
+  getRows(modelObject: RowEntity, filter?: DBFilter){
+    let where = this.createWhereClause(modelObject, filter);
     let statementSql = `SELECT * FROM ${modelObject.getTableName()} ${where}`;
     let statement = this.db.prepare(statementSql);
     return this.mapResultsToTable(statement, modelObject);
