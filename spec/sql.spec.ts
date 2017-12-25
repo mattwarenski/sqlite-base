@@ -121,7 +121,7 @@ describe("Sql functions", ()=>{
       expect(db.sum(new TestTable(), "num")).toEqual(10 + 20 + 30);
     });
 
-    fit('should handle sum/ count error', ()=>{
+    it('should handle sum/ count error', ()=>{
       let entity1 = new TestTable();
       entity1.num = 10;
       let entity2 = new TestTable();

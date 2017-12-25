@@ -1,4 +1,18 @@
 # Logs
+#
+
+*.swp
+*.*.swp
+*.*.*.swp
+
+.*.swp
+.*.*.swp
+.*.*.*.swp
+
+*.swo
+*.*.swo
+*.*.*.swo
+
 logs
 *.log
 npm-debug.log*
