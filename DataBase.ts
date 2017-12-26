@@ -198,7 +198,7 @@ export class DataBase{
       throw new Error("Expected 1 result from sum/count. Got " + res.length); 
     }
     if(!res[0]){
-      throw new Error("Got null result form sum/count"); 
+      return 0;
     }
 
     return res[0];

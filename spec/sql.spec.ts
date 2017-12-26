@@ -157,7 +157,7 @@ describe("Sql functions", ()=>{
       expect(db.sum(new TestTable(), "num")).toEqual(10 + 20 + 30);
     });
 
-    it('should handle sum/ count error', ()=>{
+    it('should return 0 if none found', ()=>{
       let entity1 = new TestTable();
       entity1.num = 10;
       let entity2 = new TestTable();
@@ -168,11 +168,8 @@ describe("Sql functions", ()=>{
       db.upsert(entity2); 
       db.upsert(entity3); 
 
-      function callSum(){
-        db.sum(new TestTable(), "str")
-      }
+      expect(db.sum(new TestTable(), "str")).toEqual(0);
 
-      expect(callSum).toThrow();
     });
   });
 });
