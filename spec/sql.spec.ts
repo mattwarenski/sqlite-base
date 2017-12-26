@@ -49,7 +49,9 @@ describe("Sql functions", ()=>{
 
     it('should create db if it does not exist', (done)=>{
       expect(fs.existsSync(filepath)).toBe(false);
+      expect(db.dbInitialized()).toBe(false);
       db.initDB(()=>{
+        expect(db.dbInitialized()).toBe(true);
         expect(db.getTables().length).toBe(1);
         expect(fs.existsSync(filepath)).toBe(true);  
         done();
@@ -58,7 +60,9 @@ describe("Sql functions", ()=>{
 
     it('should load db if it does exist', (done)=>{
       expect(fs.existsSync(filepath)).toBe(true);
+      expect(db.dbInitialized()).toBe(false);
       db.initDB(()=>{
+        expect(db.dbInitialized()).toBe(true);
         expect(db.getTables().length).toBe(1);
         expect(fs.existsSync(filepath)).toBe(true);  
         done();
@@ -81,14 +85,18 @@ describe("Sql functions", ()=>{
 
     it('should create db if it does not exist', ()=>{
       expect(fs.existsSync(filepath)).toBe(false);
+      expect(db.dbInitialized()).toBe(false);
       db.initDBSync();
+      expect(db.dbInitialized()).toBe(true);
       expect(db.getTables().length).toBe(1);
       expect(fs.existsSync(filepath)).toBe(true);  
     });
 
     it('should load db if it does exist', ()=>{
       expect(fs.existsSync(filepath)).toBe(true);
+      expect(db.dbInitialized()).toBe(false);
       db.initDBSync();
+      expect(db.dbInitialized()).toBe(true);
       expect(db.getTables().length).toBe(1);
       expect(fs.existsSync(filepath)).toBe(true);  
     });

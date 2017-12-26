@@ -17,6 +17,10 @@ export class DataBase{
     this.fs = fs;
   }
 
+  dbInitialized(): boolean{
+    return this.db != undefined; 
+  }
+
   initDBSync(){
     if(this.fs.existsSync(this.filepath)){
         this.readDBSync();
