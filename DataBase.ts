@@ -17,6 +17,16 @@ export class DataBase{
     this.fs = fs;
   }
 
+  initDBSync(){
+    if(this.fs.existsSync(this.filepath)){
+        this.readDBSync();
+    }
+    else{
+      this.db = new SQL.Database();
+      this.tables.forEach( t => this.createTable(t));
+      this.writeDBSync();
+    }
+  }
   initDB(cb: ()=>void){
     this.fs.exists(this.filepath, (exists: boolean) => {
       if(exists){
@@ -25,7 +35,7 @@ export class DataBase{
       else{
         this.db = new SQL.Database();
         this.tables.forEach( t => this.createTable(t));
-        this.writeDB();
+        this.writeDBSync();
         cb();
       }
     });
@@ -50,7 +60,18 @@ export class DataBase{
 
   }
 
-  readDB(cb: ()=>void){
+  private readDBSync(){
+    try{
+      let data = this.fs.readFileSync(this.filepath);
+      this.db = new SQL.Database(data);
+      this.updateSchema();
+    }
+    catch(e){
+        throw Error(`Unable to read DB from ${this.filepath}.\nMessage:${e}}`) 
+    }
+  }
+
+  private readDB(cb: ()=>void){
     this.fs.readFile(this.filepath, (err, data) => {
       if(err){
         throw Error(`Unable to read DB from ${this.filepath}.\nMessage:${err}}`) 
@@ -61,7 +82,7 @@ export class DataBase{
     })
   }
 
-  writeDB(){
+  private writeDBSync(){
     try{
       let dataBuffer = this.db.export();
       this.fs.writeFileSync(this.filepath, dataBuffer);
@@ -104,7 +125,7 @@ export class DataBase{
   private run(statement: string, vals?){
     try{
       this.db.run(statement, vals); 
-      this.writeDB();
+      this.writeDBSync();
     }
     catch(e){
       throw new Error(`Unable to run query: ${statement}.\nValues: ${vals.join(",")}.\n Original Message: ${e.message}`); 

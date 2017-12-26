@@ -33,7 +33,7 @@ class TestTable extends RowEntity{
 }
 
 describe("Sql functions", ()=>{
-  describe("Initialization", ()=>{
+  describe("Initialization async", ()=>{
 
     let db: DataBase;
 
@@ -63,6 +63,34 @@ describe("Sql functions", ()=>{
         expect(fs.existsSync(filepath)).toBe(true);  
         done();
       })
+    });
+  });
+
+  describe("Initialization sync", ()=>{
+    let db: DataBase;
+
+
+    beforeAll(()=>{
+      deleteDB();
+    });
+
+    beforeEach(()=>{
+      let tables = [new TestTable()]
+      db = new DataBase(fs, filepath, tables); 
+    })
+
+    it('should create db if it does not exist', ()=>{
+      expect(fs.existsSync(filepath)).toBe(false);
+      db.initDBSync();
+      expect(db.getTables().length).toBe(1);
+      expect(fs.existsSync(filepath)).toBe(true);  
+    });
+
+    it('should load db if it does exist', ()=>{
+      expect(fs.existsSync(filepath)).toBe(true);
+      db.initDBSync();
+      expect(db.getTables().length).toBe(1);
+      expect(fs.existsSync(filepath)).toBe(true);  
     });
   });
 
