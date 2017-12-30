@@ -113,6 +113,15 @@ describe("Sql functions", ()=>{
       db.initDB(done);
     })
 
+    it('should insert null rows', ()=>{
+      db.upsert(new TestTable()); 
+      db.upsert(new TestTable()); 
+
+      const rows = db.getRows(new TestTable())
+      expect(rows.length).toBe(2);
+      expect(rows[0].id).not.toEqual(rows[1].id);
+    });
+
     it('should insert rows', ()=>{
       let entity = new TestTable();
       entity.num = 7;
@@ -129,6 +138,24 @@ describe("Sql functions", ()=>{
       //TODO recheck when times are supported
       //expect(allRows[0].date.toString()).toEqual(testDate.toString());
     });
+
+    it('should filter on 0', ()=>{
+      let entity = new TestTable();
+      entity.num = 0;
+
+      let entity2 = new TestTable();
+      entity2.num = 1;
+
+      let entity3 = new TestTable();
+      db.upsert(entity); 
+      db.upsert(entity2); 
+      db.upsert(entity3); 
+
+      let res = db.getRows(entity);
+      expect(res.length).toBe(1);
+      expect(res[0].num).toEqual(0);
+    
+    })
 
     it('should count', ()=>{
       let entity1 = new TestTable();

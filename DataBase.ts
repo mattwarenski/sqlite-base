@@ -122,7 +122,16 @@ export class DataBase{
         cols.push(c.getName());
       } 
     }); 
-    let statement = `REPLACE INTO ${table.getTableName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
+    if(vals.length !== cols.length){
+      throw new Error("Number of values and columns are not equal");
+    }
+    let statement: string;
+    if(!vals.length){
+      statement = `INSERT INTO ${table.getTableName()} DEFAULT VALUES`;
+    }
+    else{
+      statement = `REPLACE INTO ${table.getTableName()} (${cols.join(",")}) VALUES (${cols.map( c=>"?")});`;
+    }
     this.run(statement, vals);
   }
 
@@ -206,8 +215,14 @@ export class DataBase{
 
   private createWhereClause(modelObject: RowEntity, filter?: DBFilter): string{
     let filters = [];
-    modelObject.getColumns().forEach( ci => modelObject[ci.getName()] ? filters.push(ci.getName()) : null);
-    let clause = filters.map( prop => `${prop} = ${modelObject.formatValueAsSql(prop)}`).concat( filter ? filter.getDateConstraints() : []).join(" AND ");
+    modelObject.getColumns()
+      .forEach( ci => {
+        let prop = modelObject[ci.getName()];
+        if(prop || prop === 0){
+          filters.push(`${ci.getName()} = ${modelObject.formatValueAsSql(ci.getName())}`) 
+        } 
+      });
+    let clause = filters.concat( filter ? filter.getDateConstraints() : []).join(" AND ");
     let where = clause ? "WHERE " + clause : "";
     where += filter ? " " + filter.getSortByClause() : "";
     return where; 
