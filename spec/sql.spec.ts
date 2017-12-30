@@ -122,6 +122,7 @@ describe("Sql functions", ()=>{
       db.upsert(entity); 
 
       let allRows =  db.getRows(new TestTable());
+      console.log("allrows", allRows);
       expect(allRows.length).toBe(1);
       expect(allRows[0].str).toEqual("string");
       expect(allRows[0].num).toEqual(7);
@@ -156,6 +157,26 @@ describe("Sql functions", ()=>{
 
       expect(db.sum(new TestTable(), "num")).toEqual(10 + 20 + 30);
     });
+
+    it('should sum with where cluase', ()=>{
+      let entity1 = new TestTable();
+      entity1.num = 10;
+      entity1.str = "thing1";
+      let entity2 = new TestTable();
+      entity2.str = "thing1";
+      entity2.num = 20;
+      let entity3 = new TestTable();
+      entity3.num = 30;
+      entity3.str = "thing2";
+
+      db.upsert(entity1); 
+      db.upsert(entity2); 
+      db.upsert(entity3); 
+
+      const filter = new TestTable();
+      filter.str = "thing1";
+      expect(db.sum(filter, "num")).toEqual(10 + 20);
+    })
 
     it('should return 0 if none found', ()=>{
       let entity1 = new TestTable();

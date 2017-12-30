@@ -1,9 +1,12 @@
 # Logs
 #
+#
 
 *.swp
 *.*.swp
 *.*.*.swp
+
+spec/testDB.sql
 
 .*.swp
 .*.*.swp

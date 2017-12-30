@@ -52,6 +52,19 @@ export abstract class RowEntity{
     return prop;
   }
 
+
+  formatValueAsSql(key: string){
+    const prop = this[key];
+    if(prop instanceof Date){
+      return moment(prop).format("YYYY-MM-DD")
+    } 
+    else if(typeof prop === 'string'){
+      return `'${prop}';` 
+    }
+    return prop;
+  
+  }
+
   getTableName(): string{
     return this.__name;
   }

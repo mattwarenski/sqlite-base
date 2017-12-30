@@ -207,7 +207,7 @@ export class DataBase{
   private createWhereClause(modelObject: RowEntity, filter?: DBFilter): string{
     let filters = [];
     modelObject.getColumns().forEach( ci => modelObject[ci.getName()] ? filters.push(ci.getName()) : null);
-    let clause = filters.map( prop => `${prop} = ${modelObject[prop]}`).concat( filter ? filter.getDateConstraints() : []).join(" AND ");
+    let clause = filters.map( prop => `${prop} = ${modelObject.formatValueAsSql(prop)}`).concat( filter ? filter.getDateConstraints() : []).join(" AND ");
     let where = clause ? "WHERE " + clause : "";
     where += filter ? " " + filter.getSortByClause() : "";
     return where; 
