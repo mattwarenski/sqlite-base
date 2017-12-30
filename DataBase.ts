@@ -200,6 +200,15 @@ export class DataBase{
     return this.getFirstResult(statement); 
   }
 
+  sumWithWhere(modelObject, sumColumn, where): number{
+    if(!(where.startsWith("where") || where.startsWith("WHERE"))){
+      where = "WHERE " + where; 
+    }
+    let statementSql = `SELECT sum(${sumColumn}) FROM ${modelObject.getTableName()} ${where}`;
+    let statement = this.db.prepare(statementSql);
+    return this.getFirstResult(statement); 
+  }
+
   private getFirstResult(statement): number{
     statement.step();
     let res = statement.get();
@@ -230,6 +239,15 @@ export class DataBase{
 
   getRows(modelObject: RowEntity, filter?: DBFilter){
     let where = this.createWhereClause(modelObject, filter);
+    let statementSql = `SELECT * FROM ${modelObject.getTableName()} ${where}`;
+    let statement = this.db.prepare(statementSql);
+    return this.mapResultsToTable(statement, modelObject);
+  }
+
+  getWithWhere(modelObject: RowEntity, where: string){
+    if(!(where.startsWith("where") || where.startsWith("WHERE"))){
+      where = "WHERE " + where; 
+    }
     let statementSql = `SELECT * FROM ${modelObject.getTableName()} ${where}`;
     let statement = this.db.prepare(statementSql);
     return this.mapResultsToTable(statement, modelObject);
