@@ -59,7 +59,7 @@ export abstract class RowEntity{
       return moment(prop).format("YYYY-MM-DD")
     } 
     else if(typeof prop === 'string'){
-      return `'${prop}';` 
+      return `'${prop}'`; 
     }
     return prop;
   
